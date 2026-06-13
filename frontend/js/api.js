@@ -22,3 +22,27 @@ async function getRepos(token) {
 
   return await response.json();
 }
+
+// Calls FastAPI to generate an AI description for a repo
+async function generateDescription(token, repo) {
+  const response = await fetch(`${API_BASE}/generate/description`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      repo_name: repo.name,
+      language: repo.language,
+      topics: repo.topics,
+      existing_description: repo.description
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to generate description");
+  }
+
+  const data = await response.json();
+  return data.description;
+}

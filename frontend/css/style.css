@@ -158,3 +158,27 @@ body {
   padding: 2px 10px;
   border-radius: 12px;
 }
+
+
+.btn-generate {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #21262d;
+  color: #58a6ff;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-generate:hover {
+  background: #30363d;
+}
+
+.btn-generate:disabled {
+  color: #8b949e;
+  cursor: not-allowed;
+}
