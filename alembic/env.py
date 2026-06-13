@@ -6,6 +6,8 @@ from os import getenv
 from dotenv import load_dotenv
 from app.database import Base
 from app.models.user import User
+from app.models.user import User
+from app.models.portfolio import Portfolio, Project
 
 load_dotenv()
 
@@ -61,3 +63,4 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
+
