@@ -1,13 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Generator</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="hero">
+    <h1 class="title">Portfolio Generator</h1>
+    <p class="subtitle">
+      Connect your GitHub account and get a beautiful 
+      portfolio website generated automatically using AI
+    </p>
+
+    <div class="features">
+      <div class="feature">⚡ Pulls all your GitHub repos</div>
+      <div class="feature">🤖 AI writes project descriptions</div>
+      <div class="feature">🚀 Deploy with one click</div>
+    </div>
+
+    <button id="connectBtn" class="btn-primary">
+      🐙 Connect GitHub
+    </button>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/landing.js"></script>
+</body>
 </html>

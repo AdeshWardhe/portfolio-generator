@@ -74,17 +74,10 @@ async def github_callback(code: str, db: Session = Depends(get_db)):
         "github_username": user.github_username
     })
 
-    return {
-        "access_token": jwt_token,
-        "token_type": "bearer",
-        "user": {
-            "id": user.id,
-            "username": user.username,
-            "github_username": user.github_username,
-            "avatar_url": user.avatar_url,
-            "bio": user.bio
-        }
-    }
+    # redirect to dashboard with token in URL
+    from fastapi.responses import RedirectResponse
+    redirect_url = f"/dashboard.html?token={jwt_token}"
+    return RedirectResponse(url=redirect_url)
 
 @router.get("/me")
 async def get_me(db: Session = Depends(get_db)):
