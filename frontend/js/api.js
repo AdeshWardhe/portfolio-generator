@@ -46,3 +46,37 @@ async function generateDescription(token, repo) {
   const data = await response.json();
   return data.description;
 }
+
+// Saves the user's portfolio (title, tagline, selected projects)
+async function savePortfolio(token, portfolioData) {
+  const response = await fetch(`${API_BASE}/portfolio/save`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(portfolioData)
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save portfolio");
+  }
+
+  return await response.json();
+}
+
+// Publishes the portfolio (makes it publicly visible)
+async function publishPortfolio(token) {
+  const response = await fetch(`${API_BASE}/portfolio/publish`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to publish portfolio");
+  }
+
+  return await response.json();
+}

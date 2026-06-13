@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from app.routers import auth, repos, generate
+from app.routers import auth, repos, generate, portfolio
+
 
 app = FastAPI(
     title="Portfolio Generator API",
@@ -17,6 +18,8 @@ def health_check():
 
 
 app.include_router(generate.router)
+app.include_router(portfolio.router)
+app.include_router(portfolio.public_router)
 
 # Serve frontend files — must be LAST so API routes are checked first
 app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
