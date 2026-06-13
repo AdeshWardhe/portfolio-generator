@@ -47,6 +47,10 @@ function renderRepos(repos) {
   const repoGrid = document.getElementById("repoGrid");
   repoGrid.innerHTML = repos.map((repo, index) => `
     <div class="repo-card" data-index="${index}">
+      <label class="checkbox-label">
+        <input type="checkbox" class="repo-checkbox" data-index="${index}">
+        Include in portfolio
+      </label>
       <h3>${repo.name}</h3>
       <p class="repo-description" id="desc-${index}">${repo.description || "No description available"}</p>
       <div class="repo-meta">
@@ -60,7 +64,6 @@ function renderRepos(repos) {
     </div>
   `).join("");
 
-  // store repos globally so handleGenerate can access them
   window.currentRepos = repos;
 }
 
@@ -86,3 +89,71 @@ async function handleGenerate(index) {
 }
 
 loadDashboard();
+
+// Handle "Save Portfolio" button click
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const title = document.getElementById("portfolioTitle").value || "My Portfolio";
+  const tagline = document.getElementById("portfolioTagline").value;
+
+  // gather selected repos
+  const checkboxes = document.querySelectorAll(".repo-checkbox:checked");
+  const selectedProjects = [];
+
+  checkboxes.forEach((checkbox, order) => {
+    const index = checkbox.dataset.index;
+    const repo = window.currentRepos[index];
+    const descElement = document.getElementById(`desc-${index}`);
+
+    selectedProjects.push({
+      repo_name: repo.name,
+      repo_url: repo.url,
+      language: repo.language,
+      ai_description: descElement.textContent,
+      display_order: order
+    });
+  });
+
+  if (selectedProjects.length === 0) {
+    alert("Please select at least one repo to include in your portfolio!");
+    return;
+  }
+
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+
+  try {
+    await savePortfolio(token, { title, tagline, projects: selectedProjects });
+    saveBtn.textContent = "✅ Saved!";
+  } catch (error) {
+    console.error("Save failed:", error);
+    saveBtn.textContent = "❌ Failed - Try Again";
+  }
+
+  setTimeout(() => {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "💾 Save Portfolio";
+  }, 2000);
+});
+
+// Handle "Publish Portfolio" button click
+document.getElementById("publishBtn").addEventListener("click", async () => {
+  const publishBtn = document.getElementById("publishBtn");
+  const messageEl = document.getElementById("publishMessage");
+
+  publishBtn.disabled = true;
+  publishBtn.textContent = "Publishing...";
+
+  try {
+    const result = await publishPortfolio(token);
+    const fullUrl = `${window.location.origin}${result.public_url}`;
+    messageEl.innerHTML = `🎉 Your portfolio is live! <a href="${result.public_url}" target="_blank">${fullUrl}</a>`;
+    publishBtn.textContent = "🌐 Publish Portfolio";
+  } catch (error) {
+    console.error("Publish failed:", error);
+    messageEl.textContent = "❌ Failed to publish. Save your portfolio first!";
+    publishBtn.textContent = "🌐 Publish Portfolio";
+  }
+
+  publishBtn.disabled = false;
+});

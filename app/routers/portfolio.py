@@ -5,8 +5,10 @@ from app.dependencies import get_current_user
 from app.models.user import User
 from app.models.portfolio import Portfolio, Project
 from app.schemas.portfolio import PortfolioSaveRequest, PortfolioResponse
-
+from fastapi.responses import HTMLResponse
+from app.services.portfolio_renderer import render_portfolio_html
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
+public_router = APIRouter(tags=["public-portfolio"])
 
 @router.post("/save")
 def save_portfolio(
@@ -99,3 +101,23 @@ def publish_portfolio(
         "message": "Portfolio published!",
         "public_url": f"/p/{current_user.github_username}"
     }
+
+
+@public_router.get("/p/{username}", response_class=HTMLResponse)
+def view_public_portfolio(username: str, db: Session = Depends(get_db)):
+    """
+    Public portfolio page — no login required.
+    """
+    user = db.query(User).filter(User.github_username == username).first()
+
+    if not user or not user.portfolio or not user.portfolio.is_published:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Portfolio not found or not published"
+        )
+
+    portfolio = user.portfolio
+    projects = sorted(portfolio.projects, key=lambda p: p.display_order)
+
+    html_content = render_portfolio_html(user, portfolio, projects)
+    return HTMLResponse(content=html_content)
